@@ -1,0 +1,325 @@
+@mixin breakpoint($point) {
+  @if $point == phone2 {
+    @media screen and (min-width:30em) { @content; } //480px
+  }
+  @if $point == tablet {
+    @media screen and (min-width:37em) { @content; } //592px
+  }
+  @if $point == tablet2 {
+    @media screen and (min-width:48em) { @content; } //768px
+  }
+  @if $point == tablet3 {
+    @media screen and (min-width:60em) { @content; } //960px
+  }
+  @if $point == laptop {
+    @media screen and (min-width:68em) { @content; } //1088px
+  }
+  @if $point == laptop2 {
+    @media screen and (min-width:77.5em) { @content; } //1240px
+  }
+  @if $point == desktop {
+    @media screen and (min-width:85em) { @content; } //1360px
+  }
+  @if $point == laptop3 {
+    @media screen and (min-width:90em) { @content; } //1440px
+  }
+  @if $point == desktop2 {
+    @media screen and (min-width:98em) { @content; } //1568px
+  }
+  @if $point == hd {
+    @media screen and (min-width:100em) { @content; } //1600px
+  }
+  @if $point == fullhd {
+    @media screen and (min-width:120em) { @content; } //1920px
+  }
+}
+
+@mixin orientation($pos) {
+  @if $pos == portrait {
+    @media screen and (orientation: portrait) { @content; }
+  }
+  @else if $pos == landscape {
+    @media screen and (orientation: landscape) { @content; }
+  }
+}
+
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+  -moz-box-sizing: $box-model; // Firefox <= 19
+  box-sizing: $box-model;
+}
+
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+@mixin box-shadow($shadow1, $shadow2:false, $shadow3:false, $shadow4:false, $shadow5:false) {
+  $params: $shadow1;
+  @if $shadow2
+  { $params: $shadow1, $shadow2; }
+  @if $shadow3 != false
+  { $params: $shadow1, $shadow2, $shadow3; }
+  @if $shadow4 != false
+  { $params: $shadow1, $shadow2, $shadow3, $shadow4; }
+  @if $shadow5 != false
+  { $params: $shadow1, $shadow2, $shadow3, $shadow4, $shadow5; }
+
+  -webkit-box-shadow: $params;
+  -moz-box-shadow: $params;
+  box-shadow: $params;
+}
+
+@mixin font-size($size: 12, $base: 16) {
+  font-size: $size + px; // fallback for old browsers
+  font-size: ($size / $base) * 1rem;
+}
+
+@mixin clearfix {
+  *zoom:1;
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+    line-height: 0;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin backface-visibility ($value) {
+  -webkit-backface-visibility: $value;
+  -moz-backface-visibility: $value;
+  -ms-backface-visibility: $value;
+  -o-backface-visibility: $value;
+  backface-visibility: $value;
+}
+
+@function prefix($property, $prefixes: (webkit moz o ms)) {
+  $vendor-prefixed-properties: transform background-clip background-size;
+  $result: ();
+  @each $prefix in $prefixes {
+    @if index($vendor-prefixed-properties, $property) {
+      $property: -#{$prefix}-#{$property}
+    }
+    $result: append($result, $property);
+  }
+  @return $result;
+}
+
+@function trans-prefix($transition, $prefix: moz) {
+  $prefixed: ();
+  @each $trans in $transition {
+    $prop-name: nth($trans, 1);
+    $vendor-prop-name: prefix($prop-name, $prefix);
+    $prop-vals: nth($trans, 2);
+    $prefixed: append($prefixed, ($vendor-prop-name $prop-vals), comma);
+  }
+
+  @return $prefixed;
+}
+
+
+@mixin transition($values...) {
+  $transitions: ();
+  @each $declaration in $values {
+    $prop: nth($declaration, 1);
+    $prop-opts: ();
+    $length: length($declaration);
+    @for $i from 2 through $length {
+      $prop-opts: append($prop-opts, nth($declaration, $i));
+    }
+    $trans: ($prop, $prop-opts);
+    $transitions: append($transitions, $trans, comma);
+  }
+
+  -webkit-transition: trans-prefix($transitions, webkit);
+  -moz-transition: trans-prefix($transitions, moz);
+  -o-transition: trans-prefix($transitions, o);
+  transition: $values;
+}
+
+@mixin transform($string) {
+  -webkit-transform: $string;
+  -moz-transform: $string;
+  -ms-transform: $string;
+  -o-transform: $string;
+  transform: $string;
+}
+
+@mixin transform-style ($style) {
+  -webkit-transform-style: $style;
+  -moz-transform-style: $style;
+  -ms-transform-style: $style;
+  -o-transform-style: $style;
+  transform-style: $style;
+}
+
+@mixin scale ($factor...) {
+  -webkit-transform: scale($factor);
+  -moz-transform: scale($factor);
+  -ms-transform: scale($factor);
+  -o-transform: scale($factor);
+  transform: scale($factor);
+}
+
+@mixin scale3d ($factor...) {
+  -webkit-transform: scale3d($factor);
+  -moz-transform: scale3d($factor);
+  -ms-transform: scale3d($factor);
+  -o-transform: scale3d($factor);
+  transform: scale3d($factor);
+}
+
+@mixin rotate ($deg) {
+  -webkit-transform: rotate($deg);
+  -moz-transform: rotate($deg);
+  -ms-transform: rotate($deg);
+  -o-transform: rotate($deg);
+  transform: rotate($deg);
+}
+
+@mixin rotateX ($deg) {
+  -webkit-transform: rotateX($deg);
+  -moz-transform: rotateX($deg);
+  -ms-transform: rotateX($deg);
+  -o-transform: rotateX($deg);
+  transform: rotateX($deg);
+}
+
+@mixin rotateY ($deg) {
+  -webkit-transform: rotateY($deg);
+  -moz-transform: rotateY($deg);
+  -ms-transform: rotateY($deg);
+  -o-transform: rotateY($deg);
+  transform: rotateY($deg);
+}
+
+@mixin skew ($deg, $deg2) {
+  -webkit-transform: skew($deg, $deg2);
+  -moz-transform: skew($deg, $deg2);
+  -ms-transform: skew($deg, $deg2);
+  -o-transform: skew($deg, $deg2);
+  transform: skew($deg, $deg2);
+}
+
+@mixin translate ($x, $y:0) {
+  -webkit-transform: translate($x, $y);
+  -moz-transform: translate($x, $y);
+  -ms-transform: translate($x, $y);
+  -o-transform: translate($x, $y);
+  transform: translate($x, $y);
+}
+
+@mixin translate3d ($x, $y: 0, $z: 0) {
+  -webkit-transform: translate3d($x, $y, $z);
+  -moz-transform: translate3d($x, $y, $z);
+  -ms-transform: translate3d($x, $y, $z);
+  -o-transform: translate3d($x, $y, $z);
+  transform: translate3d($x, $y, $z);
+}
+
+@mixin perspective ($value: 1000) {
+  -webkit-perspective: $value;
+  -moz-perspective: $value;
+  -ms-perspective: $value;
+  perspective: $value;
+}
+
+@mixin transform-origin ($x:center, $y:center) {
+  -webkit-transform-origin: $x $y;
+  -moz-transform-origin: $x $y;
+  -ms-transform-origin: $x $y;
+  -o-transform-origin: $x $y;
+  transform-origin: $x $y;
+}
+
+@mixin column-count ($value: 2) {
+  -moz-column-count:$value;
+  -webkit-column-count:$value;
+  column-count:$value;
+}
+
+@mixin column-gap ($value) {
+  -moz-column-gap:$value;
+  -webkit-column-gap:$value;
+  column-gap:$value;
+}
+
+@mixin column-rule ($value) {
+  -moz-column-rule:$value;
+  -webkit-column-rule:$value;
+  column-rule:$value;
+}
+
+@mixin no-select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin text-size-adjust ($value) {
+  -webkit-text-size-adjust: $value;
+  -moz-text-size-adjust: $value;
+  -ms-text-size-adjust: $value;
+  text-size-adjust: $value;
+}
+
+@mixin background-size ($value) {
+  -webkit-background-size:$value;
+  -moz-background-size:$value;
+  -o-background-size:$value;
+  background-size:$value;
+}
+
+@function color-diff($color-a, $color-b) {
+  $hue: hue($color-a) - hue($color-b);
+  $saturation: saturation($color-a) - saturation($color-b);
+  $lightness: lightness($color-a) - lightness($color-b);
+
+  $function-hue: 'adjust-hue';
+  $function-saturation: if($saturation > 0, 'desaturate', 'saturate');
+  $function-lightness: if($lightness > 0, 'darken', 'lighten');
+
+  @return (
+          #{$function-hue}: -($hue),
+          #{$function-saturation}: abs($saturation),
+          #{$function-lightness}: abs($lightness),
+  );
+}
+
+@function apply-color-diff($color, $diff) {
+  @each $key, $value in $diff {
+    $color: call($key, $color, $value);
+  }
+  @return $color;
+}
+
+@mixin fluid-type($properties, $min-vw, $max-vw, $min-value, $max-value) {
+  & {
+    @each $property in $properties {
+      #{$property}: $min-value;
+    }
+
+    @media screen and (min-width: $min-vw) {
+      @each $property in $properties {
+        #{$property}: calc(#{$min-value} + #{strip-unit($max-value - $min-value)} * (100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)});
+      }
+    }
+
+    @media screen and (min-width: $max-vw) {
+      @each $property in $properties {
+        #{$property}: $max-value;
+      }
+    }
+  }
+}
+
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
